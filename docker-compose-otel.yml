@@ -1,0 +1,25 @@
+services:
+  app:
+    image: spring-petclinic:latest
+    environment:
+      OTEL_SERVICE_NAME: "spring-petclinic"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://collector:4317"
+      # The default protocol is http
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"
+      # Logs are disabled by default
+      OTEL_LOGS_EXPORTER: "otlp"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - collector
+  collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    volumes:
+      - ./collector-config.yaml:/collector-config.yaml
+    command: ["--config=/collector-config.yaml"]
+    expose:
+      - "4317"
+      - "4318"
+    ports:
+      - "4317:4317"   # OTLP gRPC receiver
+      - "4318:4318"   # OTLP HTTP receiver

@@ -1,0 +1,11 @@
+FROM openjdk:17
+
+WORKDIR /app
+
+ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
+
+COPY target/*.jar /app/spring-petclinic.jar
+
+EXPOSE 8080
+
+CMD ["java", "-javaagent:/app/opentelemetry-javaagent.jar", "-jar", "spring-petclinic.jar"]

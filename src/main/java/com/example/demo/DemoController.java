@@ -12,12 +12,15 @@ import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.store.embedding.EmbeddingStore;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class DemoController {
+    private static final Logger log = LoggerFactory.getLogger(DemoController.class);
 
     private final ChatLanguageModel chatLanguageModel;
 
@@ -59,13 +62,13 @@ public class DemoController {
         Embedding embedding = embeddingModel.embed(data.getText()).content();
         embeddingStore.add(embedding, textSegment);
 
-        System.out.println("Ingested: " + data.getText());
+        log.info("Ingested: {}", data.getText());
     }
 
     @PostMapping("/ask")
     Question ask(@RequestBody Question question) {
         question.setAnswer(assistant.chat(question.getQuestion()));
-        System.out.println("Asked: " + question.getQuestion() + ", Answer: " + question.getAnswer());
+        log.info("Asked: {}, Answer: {}", question.getQuestion(), question.getAnswer());
 
         return question;
     }

@@ -8,9 +8,43 @@ This quickstart requires the following to be installed on your machine.
 
 * Unix-like operating system installed. For example, Ubuntu, Azure Linux, macOS, WSL2.
 * [Git](https://git-scm.com/downloads)
-* [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
+* [Azure CLI 2.59.0 or higher version](https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
 * [JDK 17](https://docs.microsoft.com/java/openjdk/download?WT.mc_id=asa-java-judubois#openjdk-17)
 * [Maven](https://maven.apache.org/download.cgi)
+
+## Azure CLI setup
+
+Check your Azure CLI version and upgrade to the required version if needed.
+
+```bash
+az --version
+az upgrade
+```
+
+Install or update the Azure Container Apps extension.
+
+```bash
+az extension add --name containerapp --upgrade --allow-preview true
+```
+
+Sign in to Azure CLI if you haven't already done so.
+
+```bash
+az login
+```
+
+Set the default subscription to use.
+
+```bash
+az account set --subscription "<subscription-id>"
+```
+
+Register the `Microsoft.App` and `Microsoft.OperationalInsights` namespaces if they're not already registered in your Azure subscription.
+
+```bash
+az provider register --namespace Microsoft.App
+az provider register --namespace Microsoft.OperationalInsights
+```
 
 ## Define variables
 

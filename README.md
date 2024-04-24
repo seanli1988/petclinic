@@ -208,6 +208,7 @@ Refer to the following links for more information.
 
 1. [LangChain for Java: Supercharge your Java application with the power of LLMs](https://github.com/langchain4j/langchain4j)
 1. [Collect and read OpenTelemetry data in Azure Container Apps](https://learn.microsoft.com/azure/container-apps/opentelemetry-agents?tabs=azure-cli)
+1. [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/deployment/agent/)
 1. [How to instrument Spring Boot with OpenTelemetry](https://opentelemetry.io/docs/languages/java/automatic/spring-boot/)
 1. [Create an Azure Monitor Application Insights using Azure CLI](https://learn.microsoft.com/azure/azure-monitor/app/create-workspace-resource?tabs=bicep#create-a-resource-automatically)
 1. [Connect applications in Azure Container Apps](https://learn.microsoft.com/azure/container-apps/connect-apps?tabs=bash)

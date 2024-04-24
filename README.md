@@ -11,6 +11,7 @@ This quickstart requires the following to be installed on your machine.
 * [Azure CLI 2.59.0 or higher version](https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
 * [JDK 17](https://docs.microsoft.com/java/openjdk/download?WT.mc_id=asa-java-judubois#openjdk-17)
 * [Maven](https://maven.apache.org/download.cgi)
+* [jq](https://jqlang.github.io/jq/download/)
 
 ## Azure CLI setup
 

@@ -1,6 +1,6 @@
-# Deploy AI powered PetClinic on Azure Container Apps
+# Deploy AI powered PetClinic with telemetry on Azure Container Apps
 
-This is a quickstart that shows you deploy PetClinic App powered by OpenAI on Azure Container Apps.
+This is a quickstart that shows you deploy PetClinic App powered by OpenAI on Azure Container Apps, with OpenTelemetry enabled to collect and read logs and traces in Azure Monitor Application Insights.
 
 ## Prerequisites
 
@@ -21,9 +21,10 @@ az --version
 az upgrade
 ```
 
-Install or update the Azure Container Apps extension.
+Install or update the Azure Application Insights and Azure Container Apps extensions.
 
 ```bash
+az extension add -n application-insights --upgrade --allow-preview true
 az extension add --name containerapp --upgrade --allow-preview true
 ```
 
@@ -55,6 +56,7 @@ UNIQUE_VALUE=<unique-identifier>
 RESOURCE_GROUP_NAME=${UNIQUE_VALUE}rg
 LOCATION=eastus
 ACA_ENV=${UNIQUE_VALUE}env
+APP_INSIGHTS=${UNIQUE_VALUE}appinsights
 ACA_AI_NAME=${UNIQUE_VALUE}ai
 ACA_PETCLINIC_NAME=${UNIQUE_VALUE}petclinic
 ```
@@ -72,6 +74,47 @@ az containerapp env create \
     --resource-group $RESOURCE_GROUP_NAME \
     --location $LOCATION \
     --name $ACA_ENV
+```
+
+## Collect and read OpenTelemetry data in Azure Container Apps 
+
+OpenTelemetry agents live within your container app environment. You configure agent settings through the Azure CLI.
+
+The managed OpenTelemetry agent accepts the following destinations:
+
+* Azure Monitor Application Insights
+* Datadog
+* Any OTLP endpoint (For example: New Relic or Honeycomb)
+
+In this tutorial, you use Azure Monitor Application Insights as the destination.
+
+First, create an Azure Application Insights resource to receive OpenTelemetry data.
+
+```bash
+logAnalyticsWorkspace=$(az monitor log-analytics workspace list \
+    -g $RESOURCE_GROUP_NAME | jq -r '.[0].name')
+
+az monitor app-insights component create \
+    --app $APP_INSIGHTS \
+    -g $RESOURCE_GROUP_NAME \
+    -l $LOCATION \
+    --workspace $logAnalyticsWorkspace
+```
+
+Next, enable OpenTelemetry for the Azure Container Apps environment and configure it to send data to the Azure Application Insights resource.
+
+```bash
+appInsightsConn=$(az monitor app-insights component show \
+    --app $APP_INSIGHTS \
+    -g $RESOURCE_GROUP_NAME \
+    --query 'connectionString' -o tsv)
+
+az containerapp env telemetry app-insights set \
+  --name $ACA_ENV \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --connection-string $appInsightsConn \
+  --enable-open-telemetry-logs true \
+  --enable-open-telemetry-traces true
 ```
 
 ## Prepare the source code
@@ -131,6 +174,8 @@ az containerapp create \
     --ingress 'external' \
     --env-vars \
 	PETCLINIC_AI_HOST=http://${ACA_AI_NAME} \
+	SPRING_DATASOURCE_URL=jdbc:otel:h2:mem:db \
+	SPRING_DATASOURCE_DRIVER_CLASS_NAME=io.opentelemetry.instrumentation.jdbc.OpenTelemetryDriver \
     --min-replicas 1
 ```
 
@@ -156,3 +201,12 @@ az group delete \
     --name $RESOURCE_GROUP_NAME \
     --yes --no-wait
 ```
+
+## References
+
+Refer to the following links for more information.
+
+1. [LangChain for Java: Supercharge your Java application with the power of LLMs](https://github.com/langchain4j/langchain4j)
+1. [Collect and read OpenTelemetry data in Azure Container Apps](https://learn.microsoft.com/azure/container-apps/opentelemetry-agents?tabs=azure-cli)
+1. [How to instrument Spring Boot with OpenTelemetry](https://opentelemetry.io/docs/languages/java/automatic/spring-boot/)
+1. [Create an Azure Monitor Application Insights using Azure CLI](https://learn.microsoft.com/azure/azure-monitor/app/create-workspace-resource?tabs=bicep#create-a-resource-automatically)

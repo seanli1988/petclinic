@@ -99,7 +99,7 @@ First, create an Azure Application Insights resource to receive OpenTelemetry da
 ```bash
 logAnalyticsWorkspace=$(az monitor log-analytics workspace list \
     -g $RESOURCE_GROUP_NAME \
-    --query "[0].name" -o tsv)
+    --query "[0].name" -o tsv | tr -d '\r\n')
 
 az monitor app-insights component create \
     --app $APP_INSIGHTS \

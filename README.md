@@ -58,6 +58,7 @@ export AZURE_OPENAI_KEY="<azure-openai-key>"
 export AZURE_SEARCH_ENDPOINT="<azure-search-endpoint>"
 export AZURE_SEARCH_KEY="<azure-search-key>"
 
+# example deployment names for Azure OpenAI and Azure Search, pls replace with your own
 export AZURE_OPENAI_DEPLOYMENTNAME_CHAT=pc2
 export AZURE_OPENAI_DEPLOYMENTNAME_EMBEDDING=ada002
 
@@ -226,6 +227,9 @@ az group delete \
 Refer to the following links for more information.
 
 1. [LangChain for Java: Supercharge your Java application with the power of LLMs](https://github.com/langchain4j/langchain4j)
+1. [Retrieval Augmented Generation (RAG) in Azure AI Search](https://learn.microsoft.com/azure/search/retrieval-augmented-generation-overview)
+1. [From zero to - nearly - hero with Azure OpenAI NLP and vector-based search in Azure Cognitive Search](https://techcommunity.microsoft.com/t5/microsoft-developer-community/from-zero-to-nearly-hero-with-azure-openai-nlp-and-vector-based/ba-p/3936244)
+1. [Understanding how the Azure OpenAI “use your data” feature works](https://medium.com/microsoftazure/understanding-how-the-azure-openai-use-your-data-feature-works-e57d54814728)
 1. [Collect and read OpenTelemetry data in Azure Container Apps](https://learn.microsoft.com/azure/container-apps/opentelemetry-agents?tabs=azure-cli)
 1. [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/deployment/agent/)
 1. [How to instrument Spring Boot with OpenTelemetry](https://opentelemetry.io/docs/languages/java/automatic/spring-boot/)

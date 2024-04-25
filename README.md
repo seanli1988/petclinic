@@ -58,12 +58,12 @@ LOCATION=eastus
 ACA_ENV=${UNIQUE_VALUE}env
 APP_INSIGHTS=${UNIQUE_VALUE}appinsights
 ACA_AI_NAME=${UNIQUE_VALUE}ai
-AZURE_OPENAI_ENDPOINT="<azure-openai-endpoint>"
-AZURE_OPENAI_KEY="<azure-openai-key>"
-AZURE_SEARCH_ENDPOINT="<azure-search-endpoint>"
-AZURE_SEARCH_KEY="<azure-search-key>"
 ACA_PETCLINIC_NAME=${UNIQUE_VALUE}petclinic
 WORKING_DIR=$(pwd)
+export AZURE_OPENAI_ENDPOINT="<azure-openai-endpoint>"
+export AZURE_OPENAI_KEY="<azure-openai-key>"
+export AZURE_SEARCH_ENDPOINT="<azure-search-endpoint>"
+export AZURE_SEARCH_KEY="<azure-search-key>"
 ```
 
 ## Create an Azure Container Apps Environment
@@ -131,7 +131,7 @@ First, prepare the source code for PetClinic AI by cloning the repository and ta
 
 ```bash
 cd $WORKING_DIR
-git clone --single-branch --branch ai https://github.com/seanli1988/petclinic.git petclinic-ai
+git clone --single-branch --branch ai git@github.com:seanli1988/petclinic.git petclinic-ai
 cd petclinic-ai
 ```
 
@@ -165,7 +165,7 @@ First, prepare the source code for PetClinic app by cloning the repository.
 
 ```bash
 cd $WORKING_DIR
-git clone https://github.com/seanli1988/petclinic.git
+git clone git@github.com:seanli1988/petclinic.git
 cd petclinic
 ```
 

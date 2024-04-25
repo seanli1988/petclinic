@@ -58,10 +58,10 @@ LOCATION=eastus
 ACA_ENV=${UNIQUE_VALUE}env
 APP_INSIGHTS=${UNIQUE_VALUE}appinsights
 ACA_AI_NAME=${UNIQUE_VALUE}ai
-AZURE_OPENAI_ENDPOINT="<azure-openai-endpoint>" \
-AZURE_OPENAI_KEY="<azure-openai-key>" \
-AZURE_SEARCH_ENDPOINT="<azure-search-endpoint>" \
-AZURE_SEARCH_KEY="<azure-search-key>" \
+AZURE_OPENAI_ENDPOINT="<azure-openai-endpoint>"
+AZURE_OPENAI_KEY="<azure-openai-key>"
+AZURE_SEARCH_ENDPOINT="<azure-search-endpoint>"
+AZURE_SEARCH_KEY="<azure-search-key>"
 ACA_PETCLINIC_NAME=${UNIQUE_VALUE}petclinic
 WORKING_DIR=$(pwd)
 ```

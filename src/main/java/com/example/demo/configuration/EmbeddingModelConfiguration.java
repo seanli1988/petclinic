@@ -17,12 +17,16 @@ public class EmbeddingModelConfiguration {
 
     @Value("${AZURE_OPENAI_KEY}")
     private String aikey;
+
+    @Value("${AZURE_OPENAI_DEPLOYMENTNAME_EMBEDDING}")
+    private String deploymentName;
+
     @Bean
     EmbeddingModel azureOpenAiEmbeddingModel() {
         return AzureOpenAiEmbeddingModel.builder()
                 .endpoint(endpoint)
                 .apiKey(aikey)
-                .deploymentName("ada002")
+                .deploymentName(deploymentName)
                 .tokenizer(new OpenAiTokenizer(TEXT_EMBEDDING_ADA_002))
                 .logRequestsAndResponses(true)
                 .build();

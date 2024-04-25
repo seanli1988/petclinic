@@ -52,18 +52,19 @@ az provider register --namespace Microsoft.OperationalInsights
 You define the following variables used in the quickstart. Please replace placeholders with valid values.
 
 ```bash
-UNIQUE_VALUE=<unique-identifier>
+UNIQUE_VALUE=pc<unique-identifier>
+export AZURE_OPENAI_ENDPOINT="<azure-openai-endpoint>"
+export AZURE_OPENAI_KEY="<azure-openai-key>"
+export AZURE_SEARCH_ENDPOINT="<azure-search-endpoint>"
+export AZURE_SEARCH_KEY="<azure-search-key>"
+LOCATION=<eastus>
+
 RESOURCE_GROUP_NAME=${UNIQUE_VALUE}rg
-LOCATION=eastus
 ACA_ENV=${UNIQUE_VALUE}env
 APP_INSIGHTS=${UNIQUE_VALUE}appinsights
 ACA_AI_NAME=${UNIQUE_VALUE}ai
 ACA_PETCLINIC_NAME=${UNIQUE_VALUE}petclinic
 WORKING_DIR=$(pwd)
-export AZURE_OPENAI_ENDPOINT="<azure-openai-endpoint>"
-export AZURE_OPENAI_KEY="<azure-openai-key>"
-export AZURE_SEARCH_ENDPOINT="<azure-search-endpoint>"
-export AZURE_SEARCH_KEY="<azure-search-key>"
 ```
 
 ## Create an Azure Container Apps Environment

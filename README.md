@@ -197,7 +197,7 @@ PETCLINIC_APP_URL=https://$(az containerapp show \
     --resource-group $RESOURCE_GROUP_NAME \
     --name $ACA_PETCLINIC_NAME \
     --query properties.configuration.ingress.fqdn \
-    --output tsv | tr -d '\r')
+    --output tsv)
 echo "PetClinic app URL: $PETCLINIC_APP_URL"
 ```
 

@@ -11,7 +11,6 @@ This quickstart requires the following to be installed on your machine.
 * [Azure CLI 2.59.0 or higher version](https://learn.microsoft.com/cli/azure/install-azure-cli?view=azure-cli-latest)
 * [JDK 17](https://docs.microsoft.com/java/openjdk/download?WT.mc_id=asa-java-judubois#openjdk-17)
 * [Maven](https://maven.apache.org/download.cgi)
-* [jq](https://jqlang.github.io/jq/download/)
 
 ## Azure CLI setup
 
@@ -50,7 +49,7 @@ az provider register --namespace Microsoft.OperationalInsights
 
 ## Define variables
 
-You define the following variables used in the quickstart. Please replace placeholder(s) with valid value(s).
+You define the following variables used in the quickstart. Please replace placeholders with valid values.
 
 ```bash
 UNIQUE_VALUE=<unique-identifier>
@@ -59,7 +58,12 @@ LOCATION=eastus
 ACA_ENV=${UNIQUE_VALUE}env
 APP_INSIGHTS=${UNIQUE_VALUE}appinsights
 ACA_AI_NAME=${UNIQUE_VALUE}ai
+AZURE_OPENAI_ENDPOINT="<azure-openai-endpoint>" \
+AZURE_OPENAI_KEY="<azure-openai-key>" \
+AZURE_SEARCH_ENDPOINT="<azure-search-endpoint>" \
+AZURE_SEARCH_KEY="<azure-search-key>" \
 ACA_PETCLINIC_NAME=${UNIQUE_VALUE}petclinic
+WORKING_DIR=$(pwd)
 ```
 
 ## Create an Azure Container Apps Environment
@@ -93,7 +97,8 @@ First, create an Azure Application Insights resource to receive OpenTelemetry da
 
 ```bash
 logAnalyticsWorkspace=$(az monitor log-analytics workspace list \
-    -g $RESOURCE_GROUP_NAME | jq -r '.[0].name')
+    -g $RESOURCE_GROUP_NAME \
+    --query "[0].name" -o tsv)
 
 az monitor app-insights component create \
     --app $APP_INSIGHTS \
@@ -118,23 +123,21 @@ az containerapp env telemetry app-insights set \
   --enable-open-telemetry-traces true
 ```
 
-## Prepare the source code
-
-Prepare the source code for PetClinic and its AI service by cloning the repository:
-
-```bash
-git clone https://github.com/seanli1988/petclinic.git
-cd petclinic
-```
-
 ## Deploy PetClinic AI 
 
-The PetClinic AI integrates with OpenAI service using LangChain for Java. Run the following commands to deploy it on ACA. Please replace placeholder(s) with valid value(s).
+The PetClinic AI integrates with OpenAI service using LangChain for Java. Follow instructions below to deploy it on ACA.
+
+First, prepare the source code for PetClinic AI by cloning the repository and target branch.
 
 ```bash
-# Checkout the branch for PetClinic AI
-git checkout ai
+cd $WORKING_DIR
+git clone --single-branch --branch ai https://github.com/seanli1988/petclinic.git petclinic-ai
+cd petclinic-ai
+```
 
+Next, build and deploy the PetClinic AI service to Azure Container Apps.
+
+```bash
 # Build the artifact
 mvn clean package -DskipTests=true
 
@@ -147,21 +150,28 @@ az containerapp create \
     --target-port 8080 \
     --ingress 'internal' \
     --env-vars \
-	AZURE_OPENAI_ENDPOINT="<azure-openai-endpoint>" \
-	AZURE_OPENAI_KEY="<azure-openai-key>" \
-	AZURE_SEARCH_ENDPOINT="<azure-search-endpoint>" \
-	AZURE_SEARCH_KEY="<azure-search-key>" \
+	AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT \
+	AZURE_OPENAI_KEY=$AZURE_OPENAI_KEY \
+	AZURE_SEARCH_ENDPOINT=$AZURE_SEARCH_ENDPOINT \
+	AZURE_SEARCH_KEY=$AZURE_SEARCH_KEY \
     --min-replicas 1
 ```
 
 ## Deploy PetClinic app
 
-The PetClinic app talks to PetClinic AI service. Run the following commands to deploy it on ACA.
+The PetClinic app talks to PetClinic AI service. Follow instructions below to deploy it on ACA.
+
+First, prepare the source code for PetClinic app by cloning the repository.
 
 ```bash
-# Checkout the branch for PetClinic app
-git checkout main
+cd $WORKING_DIR
+git clone https://github.com/seanli1988/petclinic.git
+cd petclinic
+```
 
+Next, build and deploy the PetClinic app to Azure Container Apps.
+
+```bash
 # Build the artifact
 mvn clean package -DskipTests=true
 

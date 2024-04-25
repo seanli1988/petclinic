@@ -14,13 +14,15 @@ public class ChatModelConfiguration {
     @Value("${AZURE_OPENAI_KEY}")
     private String aikey;
 
+    @Value("${AZURE_OPENAI_DEPLOYMENTNAME_CHAT}")
+    private String deploymentName;
 
     @Bean
     ChatLanguageModel openAIChatLanguageModel() {
         return AzureOpenAiChatModel.builder()
                 .endpoint(endpoint)
                 .apiKey(aikey)
-                .deploymentName("pc2")
+                .deploymentName(deploymentName)
                 .logRequestsAndResponses(true)
                 .build();
     }

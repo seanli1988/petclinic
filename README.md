@@ -52,12 +52,17 @@ az provider register --namespace Microsoft.OperationalInsights
 You define the following variables used in the quickstart. Please replace placeholders with valid values.
 
 ```bash
-UNIQUE_VALUE=pc-$(date +%s)
+
 export AZURE_OPENAI_ENDPOINT="<azure-openai-endpoint>"
 export AZURE_OPENAI_KEY="<azure-openai-key>"
 export AZURE_SEARCH_ENDPOINT="<azure-search-endpoint>"
 export AZURE_SEARCH_KEY="<azure-search-key>"
-LOCATION=<eastus>
+
+export AZURE_OPENAI_DEPLOYMENTNAME_CHAT=pc2
+export AZURE_OPENAI_DEPLOYMENTNAME_EMBEDDING=ada002
+
+UNIQUE_VALUE=pc-$(date +%s)
+LOCATION=eastus
 
 RESOURCE_GROUP_NAME=${UNIQUE_VALUE}rg
 ACA_ENV=${UNIQUE_VALUE}env

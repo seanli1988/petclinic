@@ -220,6 +220,40 @@ az group delete \
     --yes --no-wait
 ```
 
+## Run the PetClinic locally with OpenTelemetry disabled
+
+You can also run the PetClinic locally with OpenTelemetry disabled, to test it before deploying it to Azure Container Apps.
+
+### Run PetClinic ai locally
+
+Run the following commands to start the PetClinic ai locally.
+
+```bash
+cd $WORKING_DIR/petclinic-ai
+mvn spring-boot:run -Dspring-boot.run.arguments="--otel.sdk.disabled=true" 
+```
+
+Note that the PetClinic ai requires the following environment variables to be set. If you followed the instructions above and keep the terminal open, you should have them set already.
+
+```bash
+export AZURE_OPENAI_ENDPOINT="<azure-openai-endpoint>"
+export AZURE_OPENAI_KEY="<azure-openai-key>"
+export AZURE_SEARCH_ENDPOINT="<azure-search-endpoint>"
+export AZURE_SEARCH_KEY="<azure-search-key>"
+export AZURE_OPENAI_DEPLOYMENTNAME_CHAT="<chat-model-name>"
+export AZURE_OPENAI_DEPLOYMENTNAME_EMBEDDING="<embedding-model-name>"
+```
+
+### Run PetClinic app locally
+
+Open a new terminal window, locate the PetClinic app directory which is `$WORKING_DIR/petclinic`, and run the following commands to start the PetClinic app locally.
+
+```bash
+mvn spring-boot:run -Dspring-boot.run.arguments="--otel.sdk.disabled=true --server.port=8081"
+```
+
+Open a web browser and navigate to `http://localhost:8081` to access and test the PetClinic app powered by AI.
+
 ## References
 
 Refer to the following links for more information.

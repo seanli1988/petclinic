@@ -14,6 +14,7 @@ import dev.langchain4j.store.embedding.EmbeddingStore;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,9 @@ public class DemoController {
     private final EmbeddingStore<TextSegment> embeddingStore;
 
     private Agent assistant = null;
+
+    @Value("${persona}")
+    private String persona;
 
     public DemoController(ChatLanguageModel chatLanguageModel, EmbeddingModel embeddingModel, EmbeddingStore<TextSegment> embeddingStore) {
         this.chatLanguageModel = chatLanguageModel;
@@ -67,7 +71,7 @@ public class DemoController {
 
     @PostMapping("/ask")
     Question ask(@RequestBody Question question) {
-        question.setAnswer(assistant.chat(question.getQuestion()));
+        question.setAnswer(assistant.chat(persona + question.getQuestion()));
         log.info("Asked: {}, Answer: {}", question.getQuestion(), question.getAnswer());
 
         return question;

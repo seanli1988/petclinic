@@ -51,6 +51,8 @@ public class DemoController {
         EmbeddingStoreContentRetriever contentRetriever = EmbeddingStoreContentRetriever.builder()
                 .embeddingStore(embeddingStore)
                 .embeddingModel(embeddingModel)
+                .maxResults(10)
+                .minScore(0.1)
                 .build();
 
         assistant = AiServices.builder(Agent.class)

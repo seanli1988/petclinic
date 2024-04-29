@@ -73,9 +73,15 @@ public class DemoController {
 
     @PostMapping("/ask")
     Question ask(@RequestBody Question question) {
-        question.setAnswer(assistant.chat(persona + question.getQuestion()));
-        log.info("Asked: {}, Answer: {}", question.getQuestion(), question.getAnswer());
+        long start = System.currentTimeMillis();
 
+        question.setAnswer(assistant.chat(persona + question.getQuestion()));
+
+        long end = System.currentTimeMillis();
+        long t = end - start;
+        log.debug("ask: {} execution time: "+t, question.getQuestion());
+
+        log.info("Asked: {}, Answer: {}", question.getQuestion(), question.getAnswer());
         return question;
     }
 }

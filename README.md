@@ -66,6 +66,8 @@ LOCATION=eastus
 RESOURCE_GROUP_NAME=${UNIQUE_VALUE}rg
 ACA_ENV=${UNIQUE_VALUE}env
 APP_INSIGHTS=${UNIQUE_VALUE}appinsights
+CONFIG_SERVER=${UNIQUE_VALUE}configserver
+CONFIG_SERVER_GIT_URI="https://github.com/seanli1988/petclinic.git"
 ACA_AI_NAME=${UNIQUE_VALUE}ai
 ACA_PETCLINIC_NAME=${UNIQUE_VALUE}petclinic
 WORKING_DIR=$(pwd)
@@ -128,6 +130,20 @@ az containerapp env telemetry app-insights set \
   --enable-open-telemetry-traces true
 ```
 
+## Set up a managed Config Server for Spring microservices
+
+Azure Container Apps provides a managed Config Server for Spring microservices. The Config Server is a centralized configuration service that serves configuration data to client applications.
+
+Create a Config Server and configure it to use a Git repository as the backend.
+
+```bash
+az containerapp env java-component config-server-for-spring create \
+  --environment $ACA_ENV \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --name $CONFIG_SERVER \
+  --configuration spring.cloud.config.server.git.uri=$CONFIG_SERVER_GIT_URI spring.cloud.config.server.git.refresh-rate=30
+```
+
 ## Deploy PetClinic AI 
 
 The PetClinic AI integrates with OpenAI service using LangChain for Java. Follow instructions below to deploy it on ACA.
@@ -155,14 +171,30 @@ az containerapp create \
     --target-port 8080 \
     --ingress 'internal' \
     --env-vars \
-	AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT \
-	AZURE_OPENAI_KEY=$AZURE_OPENAI_KEY \
-	AZURE_SEARCH_ENDPOINT=$AZURE_SEARCH_ENDPOINT \
-	AZURE_SEARCH_KEY=$AZURE_SEARCH_KEY \
-	AZURE_OPENAI_DEPLOYMENTNAME_CHAT=$AZURE_OPENAI_DEPLOYMENTNAME_CHAT \
-	AZURE_OPENAI_DEPLOYMENTNAME_EMBEDDING=$AZURE_OPENAI_DEPLOYMENTNAME_EMBEDDING \
+        AZURE_OPENAI_ENDPOINT=$AZURE_OPENAI_ENDPOINT \
+        AZURE_OPENAI_KEY=$AZURE_OPENAI_KEY \
+        AZURE_SEARCH_ENDPOINT=$AZURE_SEARCH_ENDPOINT \
+        AZURE_SEARCH_KEY=$AZURE_SEARCH_KEY \
+        AZURE_OPENAI_DEPLOYMENTNAME_CHAT=$AZURE_OPENAI_DEPLOYMENTNAME_CHAT \
+        AZURE_OPENAI_DEPLOYMENTNAME_EMBEDDING=$AZURE_OPENAI_DEPLOYMENTNAME_EMBEDDING \
     --min-replicas 1
 ```
+
+Then, bind the PetClinic AI service to the Config Server.
+
+```bash
+az containerapp update \
+  --name $ACA_AI_NAME \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --bind $CONFIG_SERVER:myconfigserver
+```
+
+Alternatively, you can bind the PetClinic AI service to the Config Server from the Azure Portal.
+
+* Go to the Azure Portal, navigate to the Azure Container Apps environment, and select **Services** > **Services (Preview)**.
+* Select service with type **Spring Cloud Config**.
+* Under section **Bindings** from the popup window, select and bind the PetClinic AI service to the Config Server by following the wizard.
+* If you don't see number of **Connected Apps** increase by 1, wait for a while, refresh the page and try again.
 
 ## Deploy PetClinic app
 
@@ -191,13 +223,22 @@ az containerapp create \
     --target-port 8080 \
     --ingress 'external' \
     --env-vars \
-	PETCLINIC_AI_HOST=http://${ACA_AI_NAME} \
-	SPRING_DATASOURCE_URL=jdbc:otel:h2:mem:db \
-	SPRING_DATASOURCE_DRIVER_CLASS_NAME=io.opentelemetry.instrumentation.jdbc.OpenTelemetryDriver \
+        PETCLINIC_AI_HOST=http://${ACA_AI_NAME} \
+        SPRING_DATASOURCE_URL=jdbc:otel:h2:mem:db \
+        SPRING_DATASOURCE_DRIVER_CLASS_NAME=io.opentelemetry.instrumentation.jdbc.OpenTelemetryDriver \
     --min-replicas 1
 ```
 
-Run the following command to ouput the URL of the PetClinic, and open the URL in your web browser to talk with OpenAI!
+Then, bind the PetClinic app to the Config Server.
+
+```bash
+az containerapp update \
+  --name $ACA_PETCLINIC_NAME \
+  --resource-group $RESOURCE_GROUP_NAME \
+  --bind $CONFIG_SERVER:myconfigserver
+```
+
+Run the following command to output the URL of the PetClinic, and open the URL in your web browser to talk with OpenAI!
 
 ```bash
 PETCLINIC_APP_URL=https://$(az containerapp show \
@@ -261,9 +302,10 @@ Refer to the following links for more information.
 1. [LangChain for Java: Supercharge your Java application with the power of LLMs](https://github.com/langchain4j/langchain4j)
 1. [Retrieval Augmented Generation (RAG) in Azure AI Search](https://learn.microsoft.com/azure/search/retrieval-augmented-generation-overview)
 1. [From zero to - nearly - hero with Azure OpenAI NLP and vector-based search in Azure Cognitive Search](https://techcommunity.microsoft.com/t5/microsoft-developer-community/from-zero-to-nearly-hero-with-azure-openai-nlp-and-vector-based/ba-p/3936244)
-1. [Understanding how the Azure OpenAI “use your data” feature works](https://medium.com/microsoftazure/understanding-how-the-azure-openai-use-your-data-feature-works-e57d54814728)
+1. [Understanding how the Azure OpenAI "use your data" feature works](https://medium.com/microsoftazure/understanding-how-the-azure-openai-use-your-data-feature-works-e57d54814728)
 1. [Collect and read OpenTelemetry data in Azure Container Apps](https://learn.microsoft.com/azure/container-apps/opentelemetry-agents?tabs=azure-cli)
 1. [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/deployment/agent/)
 1. [How to instrument Spring Boot with OpenTelemetry](https://opentelemetry.io/docs/languages/java/automatic/spring-boot/)
 1. [Create an Azure Monitor Application Insights using Azure CLI](https://learn.microsoft.com/azure/azure-monitor/app/create-workspace-resource?tabs=bicep#create-a-resource-automatically)
+1. [Tutorial: Connect to a managed Config Server for Spring in Azure Container Apps (preview)](https://learn.microsoft.com/azure/container-apps/java-config-server)
 1. [Connect applications in Azure Container Apps](https://learn.microsoft.com/azure/container-apps/connect-apps?tabs=bash)

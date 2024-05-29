@@ -66,7 +66,7 @@ LOCATION=eastus
 RESOURCE_GROUP_NAME=${UNIQUE_VALUE}rg
 ACA_ENV=${UNIQUE_VALUE}env
 APP_INSIGHTS=${UNIQUE_VALUE}appinsights
-CONFIG_SERVER=${UNIQUE_VALUE}configserver
+CONFIG_SERVER=springconfigserver
 CONFIG_SERVER_GIT_URI="https://github.com/seanli1988/petclinic.git"
 ACA_AI_NAME=${UNIQUE_VALUE}ai
 ACA_PETCLINIC_NAME=${UNIQUE_VALUE}petclinic
@@ -141,7 +141,7 @@ az containerapp env java-component config-server-for-spring create \
   --environment $ACA_ENV \
   --resource-group $RESOURCE_GROUP_NAME \
   --name $CONFIG_SERVER \
-  --configuration spring.cloud.config.server.git.uri=$CONFIG_SERVER_GIT_URI spring.cloud.config.server.git.refresh-rate=30
+  --configuration spring.cloud.config.server.git.uri=$CONFIG_SERVER_GIT_URI
 ```
 
 ## Deploy PetClinic AI 
@@ -186,7 +186,7 @@ Then, bind the PetClinic AI service to the Config Server.
 az containerapp update \
   --name $ACA_AI_NAME \
   --resource-group $RESOURCE_GROUP_NAME \
-  --bind $CONFIG_SERVER:myconfigserver
+  --bind $CONFIG_SERVER
 ```
 
 Alternatively, you can bind the PetClinic AI service to the Config Server from the Azure Portal.
@@ -235,7 +235,7 @@ Then, bind the PetClinic app to the Config Server.
 az containerapp update \
   --name $ACA_PETCLINIC_NAME \
   --resource-group $RESOURCE_GROUP_NAME \
-  --bind $CONFIG_SERVER:myconfigserver
+  --bind $CONFIG_SERVER
 ```
 
 Run the following command to output the URL of the PetClinic, and open the URL in your web browser to talk with OpenAI!

@@ -57,6 +57,11 @@
   </dependencyManagement>
   
   <dependencies>
+    <dependency>
+      <groupId>de.codecentric</groupId>
+      <artifactId>spring-boot-admin-starter-client</artifactId>
+      <version>3.3.2</version>
+    </dependency>
     <!-- Spring and Spring Boot dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>

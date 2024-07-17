@@ -143,23 +143,29 @@ az containerapp create \
 ```
 
 # Spring Boot Admin
-
+```bash
 SBA_SERVER=sbaserver
 ROLE_NAME=${UNIQUE_VALUE}role
+```
 
 ## Create Spring Boot Admin server
+```bash
 az containerapp env java-component admin-for-spring create \
     --environment $ACA_ENV \
     --resource-group $RESOURCE_GROUP_NAME \
     --name $SBA_SERVER
+```
 
 ## Bind the app to Spring Boot Admin
+```bash
 az containerapp update \
   --name $ACA_PETCLINIC_NAME \
   --resource-group $RESOURCE_GROUP_NAME \
   --bind $SBA_SERVER
+```
 
 ## View the dashboard
+```bash
 az role definition create --role-definition '{
     "Name": $ROLE_NAME,
     "IsCustom": true,
@@ -171,6 +177,7 @@ az role definition create --role-definition '{
 export ENVIRONMENT_ID=$(az containerapp env show --name $ACA_ENV --resource-group $RESOURCE_GROUP_NAME --query id -o tsv)
 az role assignment create --assignee <USER_OR_SERVICE_PRINCIPAL_ID> --role $ROLE_NAME --scope $ENVIRONMENT_ID
 az containerapp env java-component admin-for-spring show --environment $ACA_ENV --resource-group $RESOURCE_GROUP_NAME --name $SBA_SERVER --query properties.ingress.fqdn -o tsv
+```
 
 ## License
 

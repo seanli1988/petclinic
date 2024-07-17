@@ -140,6 +140,7 @@ az containerapp create \
         SPRING_DATASOURCE_DRIVER_CLASS_NAME=io.opentelemetry.instrumentation.jdbc.OpenTelemetryDriver \
     --min-replicas 1 \
     --bind $CONFIG_SERVER
+```
 
 ## Spring Boot Admin
 

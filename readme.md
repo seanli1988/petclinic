@@ -142,31 +142,29 @@ az containerapp create \
     --bind $CONFIG_SERVER
 ```
 
-## Spring Boot Admin
+# Spring Boot Admin
 
 SBA_SERVER=sbaserver
 ROLE_NAME=${UNIQUE_VALUE}role
 
-# Create Spring Boot Admin server
+## Create Spring Boot Admin server
 az containerapp env java-component admin-for-spring create \
     --environment $ACA_ENV \
     --resource-group $RESOURCE_GROUP_NAME \
     --name $SBA_SERVER
 
-# Bind the app to Spring Boot Admin
+## Bind the app to Spring Boot Admin
 az containerapp update \
   --name $ACA_PETCLINIC_NAME \
   --resource-group $RESOURCE_GROUP_NAME \
   --bind $SBA_SERVER
 
-# View the dashboard
+## View the dashboard
 az role definition create --role-definition '{
     "Name": $ROLE_NAME,
     "IsCustom": true,
     "Description": "Can access managed Java Component dashboards in managed environments",
-    "Actions": [
-        "Microsoft.App/managedEnvironments/write"
-    ],
+    "Actions": ["Microsoft.App/managedEnvironments/write"],
     "AssignableScopes": ["/subscriptions/<SUBSCRIPTION_ID>"]
 }'
 

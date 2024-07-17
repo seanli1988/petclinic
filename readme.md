@@ -126,7 +126,7 @@ Next, build and deploy the PetClinic app to Azure Container Apps.
 # Build the artifact
 mvn clean package -DskipTests=true
 
-# Deploy the artifact to ACA
+# Deploy the artifact to ACA and bind to config server
 az containerapp create \
     --resource-group $RESOURCE_GROUP_NAME \
     --name $ACA_PETCLINIC_NAME \
@@ -138,17 +138,40 @@ az containerapp create \
         PETCLINIC_AI_HOST=http://${ACA_AI_NAME} \
         SPRING_DATASOURCE_URL=jdbc:otel:h2:mem:db \
         SPRING_DATASOURCE_DRIVER_CLASS_NAME=io.opentelemetry.instrumentation.jdbc.OpenTelemetryDriver \
-    --min-replicas 1
-```
+    --min-replicas 1 \
+    --bind $CONFIG_SERVER
 
-Then, bind the PetClinic app to the Config Server.
+## Spring Boot Admin
 
-```bash
+SBA_SERVER=sbaserver
+ROLE_NAME=${UNIQUE_VALUE}role
+
+# Create Spring Boot Admin server
+az containerapp env java-component admin-for-spring create \
+    --environment $ACA_ENV \
+    --resource-group $RESOURCE_GROUP_NAME \
+    --name $SBA_SERVER
+
+# Bind the app to Spring Boot Admin
 az containerapp update \
   --name $ACA_PETCLINIC_NAME \
   --resource-group $RESOURCE_GROUP_NAME \
-  --bind $CONFIG_SERVER
-```
+  --bind $SBA_SERVER
+
+# View the dashboard
+az role definition create --role-definition '{
+    "Name": $ROLE_NAME,
+    "IsCustom": true,
+    "Description": "Can access managed Java Component dashboards in managed environments",
+    "Actions": [
+        "Microsoft.App/managedEnvironments/write"
+    ],
+    "AssignableScopes": ["/subscriptions/<SUBSCRIPTION_ID>"]
+}'
+
+export ENVIRONMENT_ID=$(az containerapp env show --name $ACA_ENV --resource-group $RESOURCE_GROUP_NAME --query id -o tsv)
+az role assignment create --assignee <USER_OR_SERVICE_PRINCIPAL_ID> --role $ROLE_NAME --scope $ENVIRONMENT_ID
+az containerapp env java-component admin-for-spring show --environment $ACA_ENV --resource-group $RESOURCE_GROUP_NAME --name $SBA_SERVER --query properties.ingress.fqdn -o tsv
 
 ## License
 

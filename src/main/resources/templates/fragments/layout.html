@@ -55,6 +55,11 @@
             <span>Find owners</span>
           </li>
 
+          <li th:replace="~{::menuItem ('/owners/all','owners','all owners','search','All owners')}">
+            <span class="fa fa-search" aria-hidden="true"></span>
+            <span>Find owners</span>
+          </li>
+
           <li th:replace="~{::menuItem ('/aiChat','aichat','AI Chat','search','AI Chat')}">
             <span class="fa fa-search" aria-hidden="true"></span>
             <span>AI Chat</span>

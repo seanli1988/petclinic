@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.owner;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,8 @@ class OwnerController {
 	private static final String VIEWS_OWNER_CREATE_OR_UPDATE_FORM = "owners/createOrUpdateOwnerForm";
 
 	private final OwnerRepository owners;
+
+	private static List<Owner> ownersCache = new ArrayList<>();
 
 	@Value("${petclinic.owner.pageSize:100}")
 	private int pageSize;
@@ -168,4 +171,21 @@ class OwnerController {
 		return mav;
 	}
 
+	@GetMapping("/owners/all")
+	public ModelAndView showAllOwners() {
+		ModelAndView mav = new ModelAndView("owners/ownersList");
+		List<Owner> owners = findAllOwnersAndFlushCache();
+		mav.addObject("listOwners", owners);
+		return mav;
+	}
+
+	private List<Owner> findAllOwnersAndFlushCache() {
+		List<Owner> owners = this.owners.findAll();
+		for(Owner owner : owners) {
+			if (!ownersCache.contains(owner)) {
+				ownersCache.add(owner);
+			}
+		}
+		return owners;
+	}
 }

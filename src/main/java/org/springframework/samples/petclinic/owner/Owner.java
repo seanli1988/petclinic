@@ -17,6 +17,7 @@ package org.springframework.samples.petclinic.owner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.samples.petclinic.model.Person;
@@ -171,4 +172,15 @@ public class Owner extends Person {
 		pet.addVisit(visit);
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof Owner owner)) return false;
+        return Objects.equals(address, owner.address) && Objects.equals(city, owner.city) && Objects.equals(telephone, owner.telephone);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(address, city, telephone);
+	}
 }
